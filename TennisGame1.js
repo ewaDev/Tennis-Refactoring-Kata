@@ -1,67 +1,72 @@
-var TennisGame1 = function(player1Name, player2Name) {
-    this.m_score1 = 0;
-    this.m_score2 = 0;
-    this.player1Name = player1Name;
-    this.player2Name = player2Name;
+const TennisGame1 = function (player1Name, player2Name) {
+  this.player1Score = 0;
+  this.player2Score = 0;
+  this.player1Name = player1Name;
+  this.player2Name = player2Name;
 };
 
-TennisGame1.prototype.wonPoint = function(playerName) {
-    if (playerName === "player1")
-        this.m_score1 += 1;
-    else
-        this.m_score2 += 1;
-};
+function getNumericalStringScore(score) {
+    const scoreStrings = ["Love", "Fifteen", "Thirty", "Forty"]; 
+    
+    return scoreStrings[score];
+}
 
-TennisGame1.prototype.getScore = function() {
-    var score = "";
-    var tempScore = 0;
-    if (this.m_score1 === this.m_score2) {
-        switch (this.m_score1) {
-            case 0:
-                score = "Love-All";
-                break;
-            case 1:
-                score = "Fifteen-All";
-                break;
-            case 2:
-                score = "Thirty-All";
-                break;
-            default:
-                score = "Deuce";
-                break;
-        }
-    } else if (this.m_score1 >= 4 || this.m_score2 >= 4) {
-        var minusResult = this.m_score1 - this.m_score2;
-        if (minusResult === 1) score = "Advantage player1";
-        else if (minusResult === -1) score = "Advantage player2";
-        else if (minusResult >= 2) score = "Win for player1";
-        else score = "Win for player2";
-    } else {
-        for (var i = 1; i < 3; i++) {
-            if (i === 1) tempScore = this.m_score1;
-            else {
-                score += "-";
-                tempScore = this.m_score2;
-            }
-            switch (tempScore) {
-                case 0:
-                    score += "Love";
-                    break;
-                case 1:
-                    score += "Fifteen";
-                    break;
-                case 2:
-                    score += "Thirty";
-                    break;
-                case 3:
-                    score += "Forty";
-                    break;
-            }
-        }
+function combineNumericalStringScore(player1Score, player2Score) {
+    if (player1Score === player2Score)  {
+        return getNumericalStringScore(player1Score) + "-All"
     }
-    return score;
+    
+    return getNumericalStringScore(player1Score) + "-" + getNumericalStringScore(player2Score);
+}
+
+//was not sure what this state of the game is called, for now I called it Ongoing
+function isSetOngoing(player1Score, player2Score){
+   return (player1Score < 4 && player2Score < 4) && (player1Score + player2Score < 6);
+}
+
+function getAdvantageStringScore(player){
+    return "Advantage" + " " + player; 
+} 
+
+function getWinningStringScore(player){
+    return "Win for" + " " + player; 
+} 
+
+function isAdvantage(player1Score, player2Score){
+    return (player1Score - player2Score) * (player1Score - player2Score) === 1; 
+}
+
+TennisGame1.prototype.wonPoint = function (playerName) {
+    if (playerName === this.player1Name) {
+      this.player1Score += 1;
+    } else {
+      this.player2Score += 1;
+    }
+  };
+
+TennisGame1.prototype.getHigherScorePlayerName = function () {
+    return this.player1Score > this.player2Score ? this.player1Name : this.player2Name ; 
+}
+
+TennisGame1.prototype.getScore = function () {
+    
+    if (isSetOngoing(this.player1Score, this.player2Score)) {
+        
+        return combineNumericalStringScore (this.player1Score, this.player2Score)
+    }
+    else {
+       
+        if (this.player1Score === this.player2Score) { 
+            return "Deuce";
+        }
+
+        return isAdvantage(this.player1Score, this.player2Score) ? 
+                getAdvantageStringScore(this.getHigherScorePlayerName()) :
+                getWinningStringScore(this.getHigherScorePlayerName());
+    }
+
 };
 
 if (typeof window === "undefined") {
-    module.exports = TennisGame1;
+  module.exports = TennisGame1;
 }

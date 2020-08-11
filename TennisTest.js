@@ -1,14 +1,8 @@
 if (typeof TennisGame1 === "undefined") {
-    var TennisGame1 = require("./TennisGame1.js");
-}
-if (typeof TennisGame2 === "undefined") {
-    var TennisGame2 = require("./TennisGame2.js");
-}
-if (typeof TennisGame3 === "undefined") {
-    var TennisGame3 = require("./TennisGame3.js");
+    TennisGame1 = require("./TennisGame1.js");
 }
 
-var allScores = [
+const allScores = [
     [0, 0, "Love-All"],
     [1, 1, "Fifteen-All"],
     [2, 2, "Thirty-All"],
@@ -49,17 +43,15 @@ var allScores = [
     [14, 16, "Win for player2"]
 ];
 
-var checkScore = function(reporter, TennisGame, player1Score, player2Score, expectedScore) {
-    var highestScore = Math.max(player1Score, player2Score);
-    var game;
-    var result;
-    var message = "";
-    var ok = false;
-    var i;
+const checkScore = function(reporter, TennisGame, player1Score, player2Score, expectedMessage) {
+    const highestScore = Math.max(player1Score, player2Score);
+    let game, result;
+    let message = "";
+    let isTestPassed = false;
 
     try {
         game = new TennisGame("player1", "player2");
-        for (i = 0; i < highestScore; i++) {
+        for (let i = 0; i < highestScore; i++) {
             if (i < player1Score) {
                 game.wonPoint("player1");
             }
@@ -67,10 +59,11 @@ var checkScore = function(reporter, TennisGame, player1Score, player2Score, expe
                 game.wonPoint("player2");
             }
         }
+
         result = game.getScore();
 
-        if (result === expectedScore) {
-            ok = true;
+        if (result === expectedMessage) {
+            isTestPassed = true;
         } else {
             message = "Result = '" + result + "'";
         }
@@ -78,33 +71,33 @@ var checkScore = function(reporter, TennisGame, player1Score, player2Score, expe
         message = "Exception: " + ex;
     }
 
-    reporter.addCase(expectedScore, ok, message);
+    reporter.addCase(expectedMessage, isTestPassed, message);
 };
 
-var runSuiteOnGame = function(reporter, TennisGame, title) {
+const runSuiteOnGame = function(reporter, TennisGame, title) {
     reporter.addSuite(title);
     allScores.forEach(function(score) {
         checkScore(reporter, TennisGame, score[0], score[1], score[2]);
     });
 };
 
-var getBrowserReporter = function() {
-    var results = document.getElementById("results");
-    var total = document.getElementById("total");
-    var reporter = {
+const getBrowserReporter = function() {
+    let results = document.getElementById("results");
+    let total = document.getElementById("total");
+    let reporter = {
         errors: 0,
         addSuite: function(title) {
             results.innerHTML += "<tr style=\"background:#D0D0D0;\"><td>" + title + " </td><td></td></tr>";
         },
-        addCase: function(title, ok, message) {
-            var color = ok ? "#20FF20" : "#FF2020";
+        addCase: function(title, pass, message) {
+            const color = pass ? "#20FF20" : "#FF2020";
             results.innerHTML += "<tr><td>" + title + "</td><td style=\"background:" + color + ";\">" + message + "</td></tr>";
-            if (!ok) {
+            if (!pass) {
                 this.errors++;
             }
         },
         done: function() {
-            var color = (this.errors === 0) ? "#20FF20" : "#FF2020";
+            const color = (this.errors === 0) ? "#20FF20" : "#FF2020";
             total.innerHTML = "<div style=\"background:" + color + ";\">" + this.errors + " failure(s)!</div>"
         }
     };
@@ -112,14 +105,14 @@ var getBrowserReporter = function() {
     return reporter;
 };
 
-var getConsoleReporter = function() {
-    var reporter = {
+const getConsoleReporter = function() {
+    const reporter = {
         errors: 0,
         addSuite: function(title) {
             console.log("Running suite '" + title + "'...");
         },
-        addCase: function(title, ok, message) {
-            if (!ok) {
+        addCase: function(title, pass, message) {
+            if (!pass) {
                 console.log("Case '" + title + "': " + message);
                 this.errors++;
             }
@@ -136,7 +129,7 @@ var getConsoleReporter = function() {
     return reporter;
 };
 
-var reporter = null;
+let reporter = null;
 
 if (typeof window !== "undefined") {
     reporter = getBrowserReporter();
@@ -145,6 +138,5 @@ if (typeof window !== "undefined") {
 }
 
 runSuiteOnGame(reporter, TennisGame1, "TennisGame1");
-runSuiteOnGame(reporter, TennisGame2, "TennisGame2");
-runSuiteOnGame(reporter, TennisGame3, "TennisGame3");
+
 reporter.done();
