@@ -42,7 +42,7 @@ TennisGame1.prototype.wonPoint = function (playerName) {
     } else {
       this.player2Score += 1;
     }
-  };
+};
 
 TennisGame1.prototype.getHigherScorePlayerName = function () {
     return this.player1Score > this.player2Score ? this.player1Name : this.player2Name ; 
@@ -64,7 +64,6 @@ TennisGame1.prototype.getScore = function () {
                 getAdvantageStringScore(this.getHigherScorePlayerName()) :
                 getWinningStringScore(this.getHigherScorePlayerName());
     }
-
 };
 
 if (typeof window === "undefined") {
