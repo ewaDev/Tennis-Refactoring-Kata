@@ -43,7 +43,7 @@ const allScores = [
     [14, 16, "Win for player2"]
 ];
 
-const checkScore = function(reporter, TennisGame, player1Score, player2Score, expectedMessage) {
+const checkScore = function (reporter, TennisGame, player1Score, player2Score, expectedMessage) {
     const highestScore = Math.max(player1Score, player2Score);
     let game, result;
     let message = "";
@@ -55,6 +55,7 @@ const checkScore = function(reporter, TennisGame, player1Score, player2Score, ex
             if (i < player1Score) {
                 game.wonPoint("player1");
             }
+
             if (i < player2Score) {
                 game.wonPoint("player2");
             }
@@ -64,7 +65,8 @@ const checkScore = function(reporter, TennisGame, player1Score, player2Score, ex
 
         if (result === expectedMessage) {
             isTestPassed = true;
-        } else {
+        } 
+        else {
             message = "Result = '" + result + "'";
         }
     } catch (ex) {
@@ -74,29 +76,29 @@ const checkScore = function(reporter, TennisGame, player1Score, player2Score, ex
     reporter.addCase(expectedMessage, isTestPassed, message);
 };
 
-const runSuiteOnGame = function(reporter, TennisGame, title) {
+const runSuiteOnGame = function (reporter, TennisGame, title) {
     reporter.addSuite(title);
-    allScores.forEach(function(score) {
+    allScores.forEach(function (score) {
         checkScore(reporter, TennisGame, score[0], score[1], score[2]);
     });
 };
 
-const getBrowserReporter = function() {
+const getBrowserReporter = function () {
     let results = document.getElementById("results");
     let total = document.getElementById("total");
     let reporter = {
         errors: 0,
-        addSuite: function(title) {
+        addSuite: function (title) {
             results.innerHTML += "<tr style=\"background:#D0D0D0;\"><td>" + title + " </td><td></td></tr>";
         },
-        addCase: function(title, pass, message) {
+        addCase: function (title, pass, message) {
             const color = pass ? "#20FF20" : "#FF2020";
             results.innerHTML += "<tr><td>" + title + "</td><td style=\"background:" + color + ";\">" + message + "</td></tr>";
             if (!pass) {
                 this.errors++;
             }
         },
-        done: function() {
+        done: function () {
             const color = (this.errors === 0) ? "#20FF20" : "#FF2020";
             total.innerHTML = "<div style=\"background:" + color + ";\">" + this.errors + " failure(s)!</div>"
         }
@@ -105,19 +107,19 @@ const getBrowserReporter = function() {
     return reporter;
 };
 
-const getConsoleReporter = function() {
+const getConsoleReporter = function () {
     const reporter = {
         errors: 0,
-        addSuite: function(title) {
+        addSuite: function (title) {
             console.log("Running suite '" + title + "'...");
         },
-        addCase: function(title, pass, message) {
+        addCase: function (title, pass, message) {
             if (!pass) {
                 console.log("Case '" + title + "': " + message);
                 this.errors++;
             }
         },
-        done: function() {
+        done: function () {
             if (this.errors > 0) {
                 console.log("Got " + this.errors + " failure(s)!");
             } else {
@@ -133,9 +135,10 @@ let reporter = null;
 
 if (typeof window !== "undefined") {
     reporter = getBrowserReporter();
-} else {
+} 
+else {
     reporter = getConsoleReporter();
-}
+};
 
 runSuiteOnGame(reporter, TennisGame1, "TennisGame1");
 
